@@ -7,10 +7,8 @@ import net.minecraft.world.LightType;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 
 import colossalrenders.globalwind.ClientWindInterface;
 import colossalrenders.globalwind.GlobalWind;
@@ -42,6 +40,37 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 
 		tickSound(WIND_GENTLE, currentPlayer);
 		tickSound(WIND_HOWL, currentPlayer);
+
+		if(prevWindVector == null) prevWindVector = Vec3d.ZERO;
+		if(!currentPlayer.isCreative() && !currentPlayer.isInLava() && !currentPlayer.isTouchingWater() && isOutside(13)){
+			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).getWindLevel() > 0){
+				//GlobalWind.LOGGER.info("windlevel more than 0");
+				Vec3d windVector = ((ClientWindInterface) (Object) currentPlayer.getWorld()).getWind();
+				if(windVector.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
+
+				if(!currentPlayer.isOnGround()){
+					//GlobalWind.LOGGER.info("player not on ground");
+					if(prevWindVector.length() < windVector.length()){
+						prevWindVector = WindCalculator.calculateWindVector(prevWindVector, windVector);
+					}
+
+					addVelocity(currentPlayer, prevWindVector);
+				}else{
+					prevWindVector = Vec3d.ZERO;
+
+					if(windVector.length() > GlobalWindConstants.MAX_WIND_SPEED_BEFORE_SLIPPING){
+						prevWindVector = windVector.multiply(GlobalWindConstants.SLIPPING_MULTIPLIER);
+						addVelocity(currentPlayer, prevWindVector);
+					}
+				}
+			}
+		}
+	}
+
+	private static void addVelocity(ClientPlayerEntity player, Vec3d vector){
+		player.addVelocity(vector);
+		player.velocityModified = true;
+		//GlobalWind.LOGGER.info("Adding velocity: " + vector.length());
 	}
 
 	private void tickSound(WindSoundManager sound, ClientPlayerEntity currentPlayer){
@@ -58,10 +87,5 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 	public boolean isOutside(int threshold) {
 		ClientPlayerEntity currentPlayer = (ClientPlayerEntity) (Object) this;
 		return currentPlayer.getWorld().getLightLevel(LightType.SKY, currentPlayer.getBlockPos()) > threshold;
-	}
-
-	@Override
-	public Vec3d getWindVector() {
-		return prevWindVector;
 	}
 }

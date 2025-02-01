@@ -1,8 +1,6 @@
 package colossalrenders.globalwind.mixin;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
@@ -14,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import colossalrenders.globalwind.GlobalWind;
 import colossalrenders.globalwind.GlobalWindConstants;
+import colossalrenders.globalwind.SyncSeedPayload;
 import colossalrenders.globalwind.WindCalculator;
 import colossalrenders.globalwind.WindInterface;
 
@@ -46,10 +44,8 @@ public class ServerWorldMixin implements WindInterface{
 
 			while(i.hasNext()){
 				ServerPlayerEntity s = i.next();
-				PacketByteBuf buf = PacketByteBufs.create();
-				buf.writeLong(seed);
 
-				ServerPlayNetworking.send(s, GlobalWind.WIND_UPDATE_PACKET_ID, buf);
+				ServerPlayNetworking.send(s, new SyncSeedPayload(seed));
 			}
 		}
 
@@ -66,7 +62,7 @@ public class ServerWorldMixin implements WindInterface{
 
 	@Override
 	public Vec3d getWind() {
-		if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) GlobalWind.LOGGER.info("tried to get wind for non-overworld diemsnion");
+		//GlobalWind.LOGGER.info("getting wind: " + wind.toString());
 		return wind;
 	}
 }

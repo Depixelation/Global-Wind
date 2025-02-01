@@ -54,7 +54,7 @@ public class WindSoundManager {
 
     public void startPlaying(){
         isPlaying = true;
-        GlobalWind.LOGGER.info("Started playing " + IN.getId().toString());
+        GlobalWind.LOGGER.info("Started playing " + IN.id().toString());
     }
 
     /**
@@ -69,13 +69,13 @@ public class WindSoundManager {
 
         if(windLevel >= threshold){
             if(lastWindLevel >= threshold){
-                player.playSound(LOOP, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                player.playSoundToPlayer(LOOP, SoundCategory.AMBIENT, 1.0f, 1.0f);
             }else{
-                player.playSound(IN, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                player.playSoundToPlayer(IN, SoundCategory.AMBIENT, 1.0f, 1.0f);
             }
         }else{
             if(lastWindLevel >= threshold){
-                player.playSound(OUT, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                player.playSoundToPlayer(OUT, SoundCategory.AMBIENT, 1.0f, 1.0f);
             }else{
                 return false;
             }

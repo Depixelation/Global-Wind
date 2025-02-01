@@ -1,10 +1,9 @@
 package colossalrenders.globalwind;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
@@ -12,8 +11,6 @@ import net.minecraft.util.Identifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import colossalrenders.globalwind.config.ModConfigs;
 
 public class GlobalWind implements ModInitializer {
 	public static final String MOD_ID = "globalwind";
@@ -40,14 +37,12 @@ public class GlobalWind implements ModInitializer {
 
 		LOGGER.info("Global Wind Init");
 
-		ModConfigs.registerConfigs();
+		PayloadTypeRegistry.playS2C().register(SyncSeedPayload.ID, SyncSeedPayload.CODEC);
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			PacketByteBuf buf = PacketByteBufs.create();
-			buf.writeLong(handler.getPlayer().getServerWorld().getSeed());
 
 			server.execute(() -> {
-				ServerPlayNetworking.send(handler.getPlayer(), GlobalWind.WIND_UPDATE_PACKET_ID, buf);
+				ServerPlayNetworking.send(handler.getPlayer(), new SyncSeedPayload(handler.getPlayer().getServerWorld().getSeed()));
 			});
 			
 		});

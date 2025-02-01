@@ -1,9 +1,7 @@
 package colossalrenders.globalwind.mixin;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
@@ -26,7 +24,7 @@ public class EntityMixin{
         BlockPos entityPos = currentEntity.getBlockPos();
         boolean isOutside = currentEntity.getWorld().getLightLevel(LightType.SKY, entityPos) > 13;
         //GlobalWind.LOGGER.info("entityMixin");
-		if(!currentEntity.getWorld().isClient() && !currentEntity.isInsideWaterOrBubbleColumn() && !(currentEntity instanceof PlayerEntity)  && !(currentEntity instanceof LivingEntity)){
+		if(!currentEntity.getWorld().isClient() && !currentEntity.isInsideWaterOrBubbleColumn() && !(currentEntity instanceof PlayerEntity)){
             if(!isOutside) return;
             
             Vec3d windVelocity = ((WindInterface) currentEntity.getWorld()).getWind();
@@ -36,7 +34,7 @@ public class EntityMixin{
                 if(prevWindVelocity.length() < windVelocity.length()){
                     prevWindVelocity = WindCalculator.calculateWindVector(prevWindVelocity, windVelocity);
                 }
-                ArrowEntity e;
+
                 currentEntity.getServer().execute(() -> {
                     currentEntity.addVelocity(prevWindVelocity);
                     currentEntity.velocityModified = true;

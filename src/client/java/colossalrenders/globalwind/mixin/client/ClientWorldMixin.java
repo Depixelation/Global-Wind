@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import colossalrenders.globalwind.ClientWindInterface;
-import colossalrenders.globalwind.GlobalWind;
 import colossalrenders.globalwind.GlobalWindConstants;
 import colossalrenders.globalwind.WindCalculator;
 
@@ -34,7 +33,6 @@ public class ClientWorldMixin implements ClientWindInterface{
 
     @Override
     public Vec3d getWind() {
-        if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) GlobalWind.LOGGER.info("tried to get wind for non-overworld diemsnion");
         return wind;
     }
 

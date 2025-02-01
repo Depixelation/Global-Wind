@@ -5,8 +5,7 @@
 	"client": [
 		"ClientPlayerEntityMixin",
 		"ClientWorldMixin",
-		"ParticleMixin",
-		"ClientPlayerWindMixin"
+		"ParticleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
