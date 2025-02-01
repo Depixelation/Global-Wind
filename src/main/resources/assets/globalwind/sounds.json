@@ -1,0 +1,32 @@
+{
+    "wind-gentle": {
+        "sounds": [
+            "globalwind:ambience-wind-trees"
+        ]
+    },
+    "wind-gentle-in": {
+        "sounds": [
+            "globalwind:ambience-wind-trees-in"
+        ]
+    },
+    "wind-gentle-out": {
+        "sounds": [
+            "globalwind:ambience-wind-trees-out"
+        ]
+    },
+    "wind-howl": {
+        "sounds": [
+            "globalwind:ambience-wind-howl"
+        ]
+    },
+    "wind-howl-in": {
+        "sounds": [
+            "globalwind:ambience-wind-howl-in"
+        ]
+    },
+    "wind-howl-out": {
+        "sounds": [
+            "globalwind:ambience-wind-howl-out"
+        ]
+    }
+}

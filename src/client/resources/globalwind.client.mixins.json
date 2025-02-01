@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "colossalrenders.globalwind.mixin.client",
+	"compatibilityLevel": "JAVA_17",
+	"client": [
+		"ClientPlayerEntityMixin",
+		"ClientWorldMixin",
+		"ParticleMixin",
+		"ClientPlayerWindMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

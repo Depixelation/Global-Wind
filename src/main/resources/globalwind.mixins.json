@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "colossalrenders.globalwind.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"ServerWorldMixin",
+		"EntityMixin",
+		"LivingEntityMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
