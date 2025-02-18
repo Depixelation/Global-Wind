@@ -1,4 +1,5 @@
 package colossalrenders.globalwind.mixin.client;
+import depixelation.gwindlib.WindyWorld;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -13,11 +14,12 @@ import colossalrenders.globalwind.GlobalWind;
 import colossalrenders.globalwind.GlobalWindConstants;
 import colossalrenders.globalwind.WindCalculator;
 
+import java.util.Optional;
+
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin implements ClientWindInterface{
     private int windLevel;
-    private Vec3d wind;
-    private long windSeed;
+
     @Override
     public int getWindLevel() {
         if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) return 0;
@@ -26,21 +28,7 @@ public class ClientWorldMixin implements ClientWindInterface{
 
     @Inject(at = @At("RETURN"), method = "tickTime")
 	private void tickInjection(CallbackInfo info){
-        long t = ((ClientWorld) (Object) this).getTimeOfDay();
-        
-        wind = WindCalculator.calculateWind(t, windSeed, GlobalWindConstants.SQUASH, ((ClientWorld) (Object) this).isRaining(), ((ClientWorld) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT);
-        windLevel = WindCalculator.calculateWindLevel(wind.length());
+        Optional<Vec3d> wind = ((WindyWorld) (Object) this).getWind();
+        wind.ifPresent(windVector -> windLevel = WindCalculator.calculateWindLevel(windVector.length()));
 	}
-
-    @Override
-    public Vec3d getWind() {
-        if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) GlobalWind.LOGGER.info("tried to get wind for non-overworld diemsnion");
-        return wind;
-    }
-
-    @Override
-    public void setWindSeed(long seed) {
-        windSeed = seed;
-    }
-	
 }

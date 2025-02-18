@@ -1,4 +1,5 @@
 package colossalrenders.globalwind.mixin.client;
+import depixelation.gwindlib.WindyWorld;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Vec3d;
@@ -11,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import colossalrenders.globalwind.ClientWindInterface;
 import colossalrenders.globalwind.WindCalculator;
+
+import java.util.Optional;
 
 @Mixin(Particle.class)
 public class ParticleMixin{
@@ -26,7 +29,10 @@ public class ParticleMixin{
         if(prevWindVector == null) prevWindVector = Vec3d.ZERO;
 
         if(((ClientWindInterface) (Object) world).getWindLevel() > 0){
-            Vec3d windVector = ((ClientWindInterface) (Object) world).getWind().multiply(2.0);
+            Optional<Vec3d> wind = ((WindyWorld) world).getWind();
+            if(wind.isEmpty()) return;
+
+            Vec3d windVector = (wind.get().multiply(2.0));
 
             if(prevWindVector.length() < windVector.length()){
                 prevWindVector = WindCalculator.calculateWindVector(prevWindVector, windVector);

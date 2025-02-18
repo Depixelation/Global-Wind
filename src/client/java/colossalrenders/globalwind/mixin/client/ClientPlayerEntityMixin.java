@@ -24,7 +24,6 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 	private boolean wasOutside;
 	private final WindSoundManager WIND_GENTLE = WindSoundManager.of(GlobalWind.WIND_GENTLE_IN, GlobalWind.WIND_GENTLE, GlobalWind.WIND_GENTLE_OUT).ofLength(20*20).ofThreshold(1);
 	private final WindSoundManager WIND_HOWL = WindSoundManager.of(GlobalWind.WIND_HOWL_IN, GlobalWind.WIND_HOWL, GlobalWind.WIND_HOWL_OUT).ofLength(20*20 + 1).ofThreshold(2);
-	Vec3d prevWindVector;
 
 	@Override
 	public boolean wasOutside() {
@@ -58,10 +57,5 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 	public boolean isOutside(int threshold) {
 		ClientPlayerEntity currentPlayer = (ClientPlayerEntity) (Object) this;
 		return currentPlayer.getWorld().getLightLevel(LightType.SKY, currentPlayer.getBlockPos()) > threshold;
-	}
-
-	@Override
-	public Vec3d getWindVector() {
-		return prevWindVector;
 	}
 }

@@ -1,5 +1,6 @@
 package colossalrenders.globalwind.mixin;
 
+import depixelation.gwindlib.WindyWorld;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
@@ -8,6 +9,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,52 +23,12 @@ import colossalrenders.globalwind.WindInterface;
 
 @Mixin(ServerWorld.class)
 public class ServerWorldMixin implements WindInterface{
-	private int syncClientCountdownTimer;
-	private Vec3d wind;
-	
-	@Inject(at = @At("HEAD"), method = "tickWeather")
-	private void init(CallbackInfo info) {
-		calculateWind();
-	}
-
-	private void calculateWind(){
-		if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) return;
-
-		long t = ((World) (Object) this).getTimeOfDay();
-		long seed = ((ServerWorld) (Object) this).getSeed();
-		//GlobalWind.LOGGER.info("" + t);
-
-		wind = WindCalculator.calculateWind(t, seed, GlobalWindConstants.SQUASH, ((ServerWorld) (Object) this).isRaining(), ((ServerWorld) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT);
-		///GlobalWind.LOGGER.info("" + wind.toString());
-		//if(t % 200 == 0) GlobalWind.LOGGER.info("Current wind velocity: " + wind.length());
-
-		if(syncClientCountdownTimer == 0){
-			syncClientCountdownTimer = 1000;
-			Iterator<ServerPlayerEntity> i = ((ServerWorld) (Object) this).getPlayers().iterator();
-
-			while(i.hasNext()){
-				ServerPlayerEntity s = i.next();
-				PacketByteBuf buf = PacketByteBufs.create();
-				buf.writeLong(seed);
-
-				ServerPlayNetworking.send(s, GlobalWind.WIND_UPDATE_PACKET_ID, buf);
-			}
-		}
-
-		syncClientCountdownTimer--;
-	}
-
-
 	@Override
 	public int getWindLevel(){
-		if(this.wind == null) calculateWind();
-		double wind = this.wind.length();
-		return WindCalculator.calculateWindLevel(wind);
-	}
+		Optional<Vec3d> wind = ((WindyWorld) this).getWind();
+		if(wind.isEmpty()) return 0;
 
-	@Override
-	public Vec3d getWind() {
-		if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) GlobalWind.LOGGER.info("tried to get wind for non-overworld diemsnion");
-		return wind;
+		double windSpeed = wind.get().length();
+		return WindCalculator.calculateWindLevel(windSpeed);
 	}
 }

@@ -41,16 +41,6 @@ public class GlobalWind implements ModInitializer {
 		LOGGER.info("Global Wind Init");
 
 		ModConfigs.registerConfigs();
-
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			PacketByteBuf buf = PacketByteBufs.create();
-			buf.writeLong(handler.getPlayer().getServerWorld().getSeed());
-
-			server.execute(() -> {
-				ServerPlayNetworking.send(handler.getPlayer(), GlobalWind.WIND_UPDATE_PACKET_ID, buf);
-			});
-			
-		});
 	}
 
 	private static SoundEvent registerSound(String id) {

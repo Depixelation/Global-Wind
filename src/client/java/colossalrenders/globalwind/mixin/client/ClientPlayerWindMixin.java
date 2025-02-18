@@ -1,5 +1,6 @@
 package colossalrenders.globalwind.mixin.client;
 
+import depixelation.gwindlib.WindyWorld;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -19,6 +20,8 @@ import colossalrenders.globalwind.GlobalWind;
 import colossalrenders.globalwind.GlobalWindConstants;
 import colossalrenders.globalwind.PlayerInterface;
 import colossalrenders.globalwind.WindCalculator;
+
+import java.util.Optional;
 
 @Mixin(LivingEntity.class)
 public abstract class ClientPlayerWindMixin extends Entity{
@@ -45,12 +48,12 @@ public abstract class ClientPlayerWindMixin extends Entity{
             double x = (double) args.get(0)/f;
             double z = (double) args.get(2)/f;
 
-            if(player.getWorld() instanceof ClientWorld && ((PlayerInterface) (Object) player).isOutside(13)){
-                Vec3d windVector = ((ClientWindInterface) (Object) player.getWorld()).getWind();
-                if(windVector == null) return;
+            if(player.getWorld() instanceof ClientWorld && ((PlayerInterface) player).isOutside(13)){
+                Optional<Vec3d> windVectorOption = ((WindyWorld) player.getWorld()).getWind();
+                if(windVectorOption.isEmpty()) return;
+                Vec3d windVector = windVectorOption.get();
                 double windSlipperiness = ((p-0.55) * (1/(1-0.55)));
                 if((windVector.length() < GlobalWindConstants.MAX_WIND_SPEED_BEFORE_SLIPPING && p <= 0.8)) windSlipperiness = 0;
-                windVector = windVector.multiply(10);
                 GlobalWind.LOGGER.info("Wind Velocity " + WindCalculator.calculateKph(windVector) + "kph");
                 if(player.isOnGround()) windVector = windVector.multiply(windSlipperiness);
                 args.set(0, x + (1-f) * (windVector.x - x));

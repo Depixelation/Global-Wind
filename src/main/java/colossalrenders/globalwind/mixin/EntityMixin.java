@@ -1,5 +1,6 @@
 package colossalrenders.globalwind.mixin;
 
+import depixelation.gwindlib.WindyWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,6 +17,8 @@ import colossalrenders.globalwind.GlobalWindConstants;
 import colossalrenders.globalwind.WindCalculator;
 import colossalrenders.globalwind.WindInterface;
 
+import java.util.Optional;
+
 @Mixin(Entity.class)
 public class EntityMixin{
     Vec3d prevWindVelocity;
@@ -28,8 +31,11 @@ public class EntityMixin{
         //GlobalWind.LOGGER.info("entityMixin");
 		if(!currentEntity.getWorld().isClient() && !currentEntity.isInsideWaterOrBubbleColumn() && !(currentEntity instanceof PlayerEntity)  && !(currentEntity instanceof LivingEntity)){
             if(!isOutside) return;
-            
-            Vec3d windVelocity = ((WindInterface) currentEntity.getWorld()).getWind();
+
+            Optional<Vec3d> wind = ((WindyWorld) currentEntity.getWorld()).getWind();
+            if(wind.isEmpty()) return;
+
+            Vec3d windVelocity = wind.get();
             if(windVelocity.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
             if(!currentEntity.isOnGround() && prevWindVelocity != null){
 

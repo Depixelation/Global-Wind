@@ -1,5 +1,6 @@
 package colossalrenders.globalwind.mixin;
 
+import depixelation.gwindlib.WindyWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +20,8 @@ import colossalrenders.globalwind.GlobalWindConstants;
 import colossalrenders.globalwind.WindCalculator;
 import colossalrenders.globalwind.WindInterface;
 
+import java.util.Optional;
+
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity{
     public LivingEntityMixin(EntityType<?> type, World world){
@@ -37,7 +40,10 @@ public abstract class LivingEntityMixin extends Entity{
             double z = (double) args.get(2)/f;
 
             if(currentEntity.getWorld() instanceof ServerWorld && WindCalculator.isOutside(currentEntity, 13)){
-                Vec3d windVector = ((WindInterface) (Object) currentEntity.getWorld()).getWind();
+                Optional<Vec3d> wind = ((WindyWorld) currentEntity.getWorld()).getWind();
+                if(wind.isEmpty()) return;
+                Vec3d windVector = wind.get();
+
                 if(windVector == null) return;
                 double windSlipperiness = ((p-0.55) * (1/(1-0.55)));
                 //GlobalWind.LOGGER.info("" + windVector.length());
