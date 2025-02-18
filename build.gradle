@@ -18,6 +18,7 @@ repositories {
 	// for more information about repositories.
 	//maven { url "https://maven.shedaniel.me/" }
     //maven { url "https://maven.terraformersmc.com/releases/" }
+	mavenLocal()
 }
 
 loom {
@@ -42,7 +43,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation(files("libs/gwindlib-1.0.0-beta-4.jar"))
-
+	include "depixelation.gwindlib:gwindlib:1.0.0-beta-4"
 	//modApi "me.shedaniel.cloth:cloth-config-fabric:11.1.136"
 	
 }
