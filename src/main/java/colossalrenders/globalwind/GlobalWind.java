@@ -13,8 +13,6 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import colossalrenders.globalwind.config.ModConfigs;
-
 public class GlobalWind implements ModInitializer {
 	public static final String MOD_ID = "globalwind";
 	public static final SoundEvent WIND_GENTLE = registerSound("wind-gentle");
@@ -37,10 +35,7 @@ public class GlobalWind implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-
 		LOGGER.info("Global Wind Init");
-
-		ModConfigs.registerConfigs();
 	}
 
 	private static SoundEvent registerSound(String id) {

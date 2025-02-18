@@ -11,8 +11,11 @@ public final class WindCalculator {
     }
 
     public static int calculateWindLevel(double windMagnitude){
+        //GlobalWind.LOGGER.info("{}", windMagnitude);
         if(windMagnitude > GlobalWindConstants.WIND_LVL_1){
+			//GlobalWind.LOGGER.info("1");
 			if(windMagnitude > GlobalWindConstants.WIND_LVL_2){
+				//GlobalWind.LOGGER.info("2");
 				return 2;
 			}
 			return 1;

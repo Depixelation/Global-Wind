@@ -48,7 +48,6 @@ public abstract class LivingEntityMixin extends Entity{
                 double windSlipperiness = ((p-0.55) * (1/(1-0.55)));
                 //GlobalWind.LOGGER.info("" + windVector.length());
                 if((windVector.length() < GlobalWindConstants.MAX_WIND_SPEED_BEFORE_SLIPPING && p <= 0.8)) windSlipperiness = 0;
-                windVector = windVector.multiply(10);
                 if(currentEntity.isOnGround()) windVector = windVector.multiply(windSlipperiness);
                 args.set(0, x + (1-f) * (windVector.x - x));
                 args.set(2, z + (1-f) * (windVector.z - z));

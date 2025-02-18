@@ -54,7 +54,7 @@ public abstract class ClientPlayerWindMixin extends Entity{
                 Vec3d windVector = windVectorOption.get();
                 double windSlipperiness = ((p-0.55) * (1/(1-0.55)));
                 if((windVector.length() < GlobalWindConstants.MAX_WIND_SPEED_BEFORE_SLIPPING && p <= 0.8)) windSlipperiness = 0;
-                GlobalWind.LOGGER.info("Wind Velocity " + WindCalculator.calculateKph(windVector) + "kph");
+                if(player.getWorld().getTimeOfDay() % 20 == 10) GlobalWind.LOGGER.info("Wind Velocity " + windVector.length() * 20 + "m/s");
                 if(player.isOnGround()) windVector = windVector.multiply(windSlipperiness);
                 args.set(0, x + (1-f) * (windVector.x - x));
                 args.set(2, z + (1-f) * (windVector.z - z));

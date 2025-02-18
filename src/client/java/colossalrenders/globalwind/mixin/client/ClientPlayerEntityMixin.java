@@ -6,6 +6,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,12 +40,15 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 	private void tickInjection(CallbackInfo info){
 		ClientPlayerEntity currentPlayer = (ClientPlayerEntity) (Object) this;
 
+		//GlobalWind.LOGGER.info(((ClientWindInterface) (Object) currentPlayer.getWorld()).getWindLevel() + "");
 		tickSound(WIND_GENTLE, currentPlayer);
 		tickSound(WIND_HOWL, currentPlayer);
 	}
 
+	@Unique
 	private void tickSound(WindSoundManager sound, ClientPlayerEntity currentPlayer){
 		if(sound.isPlaying()){
+			//GlobalWind.LOGGER.info("sound is playing (x1)");
 			sound.tick((ClientWorld) currentPlayer.getWorld(), currentPlayer);
 		}else{
 			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).getWindLevel() >= sound.getThreshold()){

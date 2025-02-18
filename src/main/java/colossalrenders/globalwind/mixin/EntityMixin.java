@@ -37,6 +37,7 @@ public class EntityMixin{
 
             Vec3d windVelocity = wind.get();
             if(windVelocity.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
+            windVelocity = windVelocity.multiply(0.3);
             if(!currentEntity.isOnGround() && prevWindVelocity != null){
 
                 if(prevWindVelocity.length() < windVelocity.length()){
