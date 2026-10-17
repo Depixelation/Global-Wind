@@ -1,44 +1,43 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
-
 name: build
-on: [pull_request, push]
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-    strategy:
-      matrix:
-        include:
-          - minecraft: 1.21.1
-            mappings: 1.21.1+build.3
-            fabric: 0.102.1+1.21.1
-          - minecraft: 1.21.4
-            mappings: 1.21.4+build.1
-            fabric: 0.111.0+1.21.4
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - name: checkout repository
-        uses: actions/checkout@v4
-      - name: validate gradle wrapper
-        uses: gradle/wrapper-validation-action@v2
-      - name: setup jdk 21
-        uses: actions/setup-java@v4
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
         with:
-          java-version: 21
-          distribution: 'microsoft'
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-      - name: build
-        run: >-
-          ./gradlew build
-          -Pminecraft_version=${{ matrix.minecraft }}
-          -Pyarn_mappings=${{ matrix.mappings }}
-          -Pfabric_version=${{ matrix.fabric }}
-      - name: capture build artifacts
-        if: ${{ matrix.minecraft == '1.21.1' }} # Publish one shared artifact, built against the oldest target
-        uses: actions/upload-artifact@v4
+          distribution: microsoft
+          # Use 21 on older branches with Gradle wrappers that cannot run on Java 25.
+          java-version: '25'
+
+      - name: Set up Gradle and validate wrapper
+        uses: gradle/actions/setup-gradle@v6
         with:
-          name: Artifacts
-          path: build/libs/
+          cache-provider: basic
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+
+      - name: Build using this branch's gradle.properties
+        run: bash ./gradlew build --no-daemon --stacktrace
+
+      - name: Upload JARs
+        uses: actions/upload-artifact@v7
+        with:
+          name: globalwind-${{ github.sha }}
+          path: build/libs/*.jar
+          if-no-files-found: error
