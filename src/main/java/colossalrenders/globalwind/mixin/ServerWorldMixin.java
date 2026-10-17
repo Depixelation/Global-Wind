@@ -1,5 +1,6 @@
 package colossalrenders.globalwind.mixin;
 
+import colossalrenders.globalwind.config.ModConfigs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -34,7 +35,7 @@ public class ServerWorldMixin implements WindInterface{
 		long seed = ((ServerWorld) (Object) this).getSeed();
 		//GlobalWind.LOGGER.info("" + t);
 
-		wind = WindCalculator.calculateWind(t, seed, GlobalWindConstants.SQUASH, ((ServerWorld) (Object) this).isRaining(), ((ServerWorld) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT);
+		wind = WindCalculator.calculateWind(t, seed, GlobalWindConstants.SQUASH, ((ServerWorld) (Object) this).isRaining(), ((ServerWorld) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT, ModConfigs.WIND_MULTIPLIER_CONFIG);
 		///GlobalWind.LOGGER.info("" + wind.toString());
 		//if(t % 200 == 0) GlobalWind.LOGGER.info("Current wind velocity: " + wind.length());
 

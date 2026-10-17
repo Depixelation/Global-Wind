@@ -17,6 +17,7 @@ public class ClientWorldMixin implements ClientWindInterface{
     private int windLevel;
     private Vec3d wind;
     private long windSeed;
+    private double windStrength;
     @Override
     public int getWindLevel() {
         if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) return 0;
@@ -27,7 +28,7 @@ public class ClientWorldMixin implements ClientWindInterface{
 	private void tickInjection(CallbackInfo info){
         long t = ((ClientWorld) (Object) this).getTimeOfDay();
         
-        wind = WindCalculator.calculateWind(t, windSeed, GlobalWindConstants.SQUASH, ((ClientWorld) (Object) this).isRaining(), ((ClientWorld) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT);
+        wind = WindCalculator.calculateWind(t, windSeed, GlobalWindConstants.SQUASH, ((ClientWorld) (Object) this).isRaining(), ((ClientWorld) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT, windStrength);
         windLevel = WindCalculator.calculateWindLevel(wind.length());
 	}
 
@@ -40,5 +41,7 @@ public class ClientWorldMixin implements ClientWindInterface{
     public void setWindSeed(long seed) {
         windSeed = seed;
     }
-	
+
+    @Override
+    public void setWindStrength(double strength) {windStrength = strength;}
 }

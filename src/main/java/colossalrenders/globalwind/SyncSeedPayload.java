@@ -1,5 +1,6 @@
 package colossalrenders.globalwind;
 
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -12,5 +13,9 @@ public record SyncSeedPayload(long seed) implements CustomPayload{
     @Override
     public Id<? extends CustomPayload> getId() {
         return ID;
+    }
+
+    public static void registerS2C() {
+        PayloadTypeRegistry.playS2C().register(ID, CODEC);
     }
 }

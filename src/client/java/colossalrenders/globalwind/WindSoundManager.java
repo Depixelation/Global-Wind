@@ -54,7 +54,7 @@ public class WindSoundManager {
 
     public void startPlaying(){
         isPlaying = true;
-        GlobalWind.LOGGER.info("Started playing " + IN.id().toString());
+        GlobalWind.LOGGER.info("Started playing {}", IN);
     }
 
     /**

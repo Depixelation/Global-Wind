@@ -9,7 +9,7 @@ public final class WindCalculator {
         throw new UnsupportedOperationException();
     }
 
-    public static Vec3d calculateWind(long t, long seed, int SQUASH, boolean isRaining, boolean isThundering, double WIND_MULTIPLIER){
+    public static Vec3d calculateWind(long t, long seed, int SQUASH, boolean isRaining, boolean isThundering, double WIND_MULTIPLIER, double WIND_MULTIPLIER_CONFIG){
         double x = Math.sin(2 * (((double) t - seed)/SQUASH)) + Math.sin(Math.PI * (((double) t - seed)/SQUASH));
 		double z = Math.sin(2 * (((double) -t + seed)/SQUASH)) + Math.sin(Math.PI * (((double) -t + seed)/SQUASH) + 10);
 		double a = Math.sin(2 * (((double) (t - seed)*2)/SQUASH) + 1) + Math.sin(Math.PI * (((double) (-t + seed)*2)/SQUASH) + 1);
@@ -24,7 +24,7 @@ public final class WindCalculator {
 		Vec3d windVector = new Vec3d(x, 0, z);
 		windVector = windVector.multiply(Math.max(multiplier, 0));
 
-        return windVector.multiply(WIND_MULTIPLIER).multiply(ModConfigs.WIND_MULTIPLIER_CONFIG);
+        return windVector.multiply(WIND_MULTIPLIER).multiply(WIND_MULTIPLIER_CONFIG);
     }
 
     public static int calculateWindLevel(double windMagnitude){

@@ -21,7 +21,8 @@ public class GlobalWind implements ModInitializer {
 	public static final SoundEvent WIND_HOWL_IN = registerSound("wind-howl-in");
 	public static final SoundEvent WIND_GENTLE_OUT = registerSound("wind-gentle-out");
 	public static final SoundEvent WIND_HOWL_OUT = registerSound("wind-howl-out");
-	public static final Identifier WIND_UPDATE_PACKET_ID = Identifier.of(MOD_ID, "wind-sound");
+	public static final Identifier WIND_UPDATE_PACKET_ID = Identifier.of(MOD_ID, "wind-sound"); //why is this id pathed to "wind-sound?" What does it have to do with sound??
+	public static final Identifier SYNC_CONFIG_PACKET_ID = Identifier.of(MOD_ID, "sync-wind-strength");
 
 	public static final SoundEvent[] WIND_SOUNDS = {WIND_GENTLE, WIND_GENTLE_IN, WIND_GENTLE_OUT, WIND_HOWL, WIND_HOWL_IN, WIND_HOWL_OUT};
 
@@ -38,12 +39,14 @@ public class GlobalWind implements ModInitializer {
 
 		LOGGER.info("Global Wind Init");
 
-		PayloadTypeRegistry.playS2C().register(SyncSeedPayload.ID, SyncSeedPayload.CODEC);
+		SyncSeedPayload.registerS2C();
+		SyncConfigPayload.registerS2C();
 
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 
 			server.execute(() -> {
 				ServerPlayNetworking.send(handler.getPlayer(), new SyncSeedPayload(handler.getPlayer().getServerWorld().getSeed()));
+				ServerPlayNetworking.send(handler.getPlayer(), new SyncConfigPayload(ModConfigs.WIND_MULTIPLIER_CONFIG));
 			});
 			
 		});

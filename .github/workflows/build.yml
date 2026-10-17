@@ -10,27 +10,34 @@ jobs:
   build:
     strategy:
       matrix:
-        # Use these Java versions
-        java: [
-          21,    # Current Java LTS
-        ]
+        include:
+          - minecraft: 1.21.1
+            mappings: 1.21.1+build.3
+            fabric: 0.102.1+1.21.1
+          - minecraft: 1.21.4
+            mappings: 1.21.4+build.1
+            fabric: 0.111.0+1.21.4
     runs-on: ubuntu-22.04
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
       - name: validate gradle wrapper
         uses: gradle/wrapper-validation-action@v2
-      - name: setup jdk ${{ matrix.java }}
+      - name: setup jdk 21
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 21
           distribution: 'microsoft'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
-        run: ./gradlew build
+        run: >-
+          ./gradlew build
+          -Pminecraft_version=${{ matrix.minecraft }}
+          -Pyarn_mappings=${{ matrix.mappings }}
+          -Pfabric_version=${{ matrix.fabric }}
       - name: capture build artifacts
-        if: ${{ matrix.java == '21' }} # Only upload artifacts built from latest java
+        if: ${{ matrix.minecraft == '1.21.1' }} # Publish one shared artifact, built against the oldest target
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
