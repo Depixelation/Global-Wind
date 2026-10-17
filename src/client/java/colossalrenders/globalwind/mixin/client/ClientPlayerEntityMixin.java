@@ -22,9 +22,9 @@ import colossalrenders.globalwind.WindSoundManager;
 public class ClientPlayerEntityMixin implements PlayerInterface{
 	@Unique
     private boolean wasOutside;
-	@Unique
+	//@Unique
     private final WindSoundManager WIND_GENTLE = WindSoundManager.of(GlobalWind.WIND_GENTLE_IN, GlobalWind.WIND_GENTLE, GlobalWind.WIND_GENTLE_OUT).ofLength(20*20).ofThreshold(1);
-	@Unique
+	//@Unique
     private final WindSoundManager WIND_HOWL = WindSoundManager.of(GlobalWind.WIND_HOWL_IN, GlobalWind.WIND_HOWL, GlobalWind.WIND_HOWL_OUT).ofLength(20*20 + 1).ofThreshold(2);
 	@Unique
     Vec3d prevWindVector;
