@@ -1,6 +1,7 @@
 package colossalrenders.globalwind.mixin;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -28,6 +29,7 @@ public class EntityMixin{
         //GlobalWind.LOGGER.info("entityMixin");
 		if(!currentEntity.getWorld().isClient() && !currentEntity.isInsideWaterOrBubbleColumn() && !(currentEntity instanceof PlayerEntity)){
             if(!isOutside) return;
+            if(currentEntity instanceof LivingEntity e && e.isClimbing()) return;
             
             Vec3d windVelocity = ((WindInterface) currentEntity.getWorld()).global_Wind$getWind();
             if(windVelocity.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
