@@ -41,7 +41,7 @@ public class EntityMixin{
 
                 currentEntity.getEntityWorld().getServer().execute(() -> {
                     currentEntity.addVelocity(prevWindVelocity);
-                    currentEntity.velocityModified = true;
+                    currentEntity.velocityDirty = true;
                 });
 
             }else if(prevWindVelocity == null){
@@ -54,7 +54,7 @@ public class EntityMixin{
 
                     currentEntity.getEntityWorld().getServer().execute(() -> {
                         currentEntity.addVelocity(prevWindVelocity);
-                        currentEntity.velocityModified = true;
+                        currentEntity.velocityDirty = true;
                     });
                 }
             }

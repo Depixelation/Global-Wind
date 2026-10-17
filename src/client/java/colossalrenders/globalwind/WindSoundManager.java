@@ -2,6 +2,7 @@ package colossalrenders.globalwind;
 
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
@@ -69,13 +70,13 @@ public class WindSoundManager {
 
         if(windLevel >= threshold){
             if(lastWindLevel >= threshold){
-                player.playSoundToPlayer(LOOP, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                world.playSoundClient(LOOP, SoundCategory.AMBIENT, 1.0f, 1.0f);
             }else{
-                player.playSoundToPlayer(IN, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                world.playSoundClient(IN, SoundCategory.AMBIENT, 1.0f, 1.0f);
             }
         }else{
             if(lastWindLevel >= threshold){
-                player.playSoundToPlayer(OUT, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                world.playSoundClient(OUT, SoundCategory.AMBIENT, 1.0f, 1.0f);
             }else{
                 return false;
             }

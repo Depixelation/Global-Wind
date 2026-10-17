@@ -75,7 +75,7 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 	@Unique
     private static void addVelocity(ClientPlayerEntity player, Vec3d vector){
 		player.addVelocity(vector);
-		player.velocityModified = true;
+		player.velocityDirty = true;
 		//GlobalWind.LOGGER.info("Adding velocity: " + vector.length());
 	}
 
