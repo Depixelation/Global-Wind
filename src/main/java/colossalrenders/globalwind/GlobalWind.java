@@ -44,7 +44,7 @@ public class GlobalWind implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 
 			server.execute(() -> {
-				ServerPlayNetworking.send(handler.getPlayer(), new SyncSeedPayload(handler.getPlayer().getServerWorld().getSeed()));
+				ServerPlayNetworking.send(handler.getPlayer(), new SyncSeedPayload(handler.getPlayer().getEntityWorld().getSeed()));
 				ServerPlayNetworking.send(handler.getPlayer(), new SyncConfigPayload(ModConfigs.WIND_MULTIPLIER_CONFIG));
 			});
 			

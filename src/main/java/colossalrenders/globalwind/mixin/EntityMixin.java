@@ -25,13 +25,13 @@ public class EntityMixin{
 	private void init(CallbackInfo info) {
         Entity currentEntity = (Entity) (Object) this;
         BlockPos entityPos = currentEntity.getBlockPos();
-        boolean isOutside = currentEntity.getWorld().getLightLevel(LightType.SKY, entityPos) > 13;
+        boolean isOutside = currentEntity.getEntityWorld().getLightLevel(LightType.SKY, entityPos) > 13;
         //GlobalWind.LOGGER.info("entityMixin");
-		if(!currentEntity.getWorld().isClient() && !currentEntity.isTouchingWater() && !(currentEntity instanceof PlayerEntity)){
+		if(!currentEntity.getEntityWorld().isClient() && !currentEntity.isTouchingWater() && !(currentEntity instanceof PlayerEntity)){
             if(!isOutside) return;
             if(currentEntity instanceof LivingEntity e && e.isClimbing()) return;
             
-            Vec3d windVelocity = ((WindInterface) currentEntity.getWorld()).global_Wind$getWind();
+            Vec3d windVelocity = ((WindInterface) currentEntity.getEntityWorld()).global_Wind$getWind();
             if(windVelocity.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
             if(!currentEntity.isOnGround() && prevWindVelocity != null){
 
@@ -39,7 +39,7 @@ public class EntityMixin{
                     prevWindVelocity = WindCalculator.calculateWindVector(prevWindVelocity, windVelocity);
                 }
 
-                currentEntity.getServer().execute(() -> {
+                currentEntity.getEntityWorld().getServer().execute(() -> {
                     currentEntity.addVelocity(prevWindVelocity);
                     currentEntity.velocityModified = true;
                 });
@@ -52,7 +52,7 @@ public class EntityMixin{
 
                     prevWindVelocity = windVelocity.multiply(GlobalWindConstants.SLIPPING_MULTIPLIER);
 
-                    currentEntity.getServer().execute(() -> {
+                    currentEntity.getEntityWorld().getServer().execute(() -> {
                         currentEntity.addVelocity(prevWindVelocity);
                         currentEntity.velocityModified = true;
                     });

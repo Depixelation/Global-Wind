@@ -48,9 +48,9 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 
 		if(prevWindVector == null) prevWindVector = Vec3d.ZERO;
 		if(!currentPlayer.isCreative() && !currentPlayer.isSpectator() && !currentPlayer.isInLava() && !currentPlayer.isTouchingWater() && !currentPlayer.isClimbing() && global_Wind$isOutside(13)){
-			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).global_Wind$getWindLevel() > 0){
+			if(((ClientWindInterface) (Object) currentPlayer.getEntityWorld()).global_Wind$getWindLevel() > 0){
 				//GlobalWind.LOGGER.info("windlevel more than 0");
-				Vec3d windVector = ((ClientWindInterface) (Object) currentPlayer.getWorld()).global_Wind$getWind();
+				Vec3d windVector = ((ClientWindInterface) (Object) currentPlayer.getEntityWorld()).global_Wind$getWind();
 				if(windVector.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
 
 				if(!currentPlayer.isOnGround()){
@@ -82,9 +82,9 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 	@Unique
     private void tickSound(WindSoundManager sound, ClientPlayerEntity currentPlayer){
 		if(sound.isPlaying()){
-			sound.tick((ClientWorld) currentPlayer.getWorld(), currentPlayer);
+			sound.tick((ClientWorld) currentPlayer.getEntityWorld(), currentPlayer);
 		}else{
-			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).global_Wind$getWindLevel() >= sound.getThreshold()){
+			if(((ClientWindInterface) (Object) currentPlayer.getEntityWorld()).global_Wind$getWindLevel() >= sound.getThreshold()){
 				if(((PlayerInterface) (Object) currentPlayer).global_Wind$isOutside(0))sound.startPlaying();
 			}
 		}
@@ -93,6 +93,6 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 	@Override
 	public boolean global_Wind$isOutside(int threshold) {
 		ClientPlayerEntity currentPlayer = (ClientPlayerEntity) (Object) this;
-		return currentPlayer.getWorld().getLightLevel(LightType.SKY, currentPlayer.getBlockPos()) > threshold;
+		return currentPlayer.getEntityWorld().getLightLevel(LightType.SKY, currentPlayer.getBlockPos()) > threshold;
 	}
 }
