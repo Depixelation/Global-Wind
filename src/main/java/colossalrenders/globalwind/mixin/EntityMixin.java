@@ -26,7 +26,7 @@ public class EntityMixin{
         BlockPos entityPos = currentEntity.getBlockPos();
         boolean isOutside = currentEntity.getWorld().getLightLevel(LightType.SKY, entityPos) > 13;
         //GlobalWind.LOGGER.info("entityMixin");
-		if(!currentEntity.getWorld().isClient() && !currentEntity.isInsideWaterOrBubbleColumn() && !(currentEntity instanceof PlayerEntity)){
+		if(!currentEntity.getWorld().isClient() && !currentEntity.isTouchingWater() && !(currentEntity instanceof PlayerEntity)){
             if(!isOutside) return;
             
             Vec3d windVelocity = ((WindInterface) currentEntity.getWorld()).global_Wind$getWind();
