@@ -6,6 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,6 +17,7 @@ import colossalrenders.globalwind.WindInterface;
 
 @Mixin(Entity.class)
 public class EntityMixin{
+    @Unique
     Vec3d prevWindVelocity;
 	
 	@Inject(at = @At("RETURN"), method = "tick")
@@ -27,7 +29,7 @@ public class EntityMixin{
 		if(!currentEntity.getWorld().isClient() && !currentEntity.isInsideWaterOrBubbleColumn() && !(currentEntity instanceof PlayerEntity)){
             if(!isOutside) return;
             
-            Vec3d windVelocity = ((WindInterface) currentEntity.getWorld()).getWind();
+            Vec3d windVelocity = ((WindInterface) currentEntity.getWorld()).global_Wind$getWind();
             if(windVelocity.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
             if(!currentEntity.isOnGround() && prevWindVelocity != null){
 

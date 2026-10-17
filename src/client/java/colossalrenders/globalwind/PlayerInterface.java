@@ -1,7 +1,7 @@
 package colossalrenders.globalwind;
 
 public interface PlayerInterface {
-    public boolean wasOutside();
-    public void setOutside(Boolean outside);
-    public boolean isOutside(int threshold);
+    public boolean global_Wind$wasOutside();
+    public void global_Wind$setOutside(Boolean outside);
+    public boolean global_Wind$isOutside(int threshold);
 }

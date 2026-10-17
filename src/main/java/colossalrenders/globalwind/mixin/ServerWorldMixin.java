@@ -6,9 +6,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import java.util.Iterator;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,15 +20,18 @@ import colossalrenders.globalwind.WindInterface;
 
 @Mixin(ServerWorld.class)
 public class ServerWorldMixin implements WindInterface{
-	private int syncClientCountdownTimer;
-	private Vec3d wind;
+	@Unique
+    private int syncClientCountdownTimer;
+	@Unique
+    private Vec3d wind;
 	
 	@Inject(at = @At("HEAD"), method = "tickWeather")
 	private void init(CallbackInfo info) {
 		calculateWind();
 	}
 
-	private void calculateWind(){
+	@Unique
+    private void calculateWind(){
 		if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) return;
 
 		long t = ((World) (Object) this).getTimeOfDay();
@@ -41,13 +44,10 @@ public class ServerWorldMixin implements WindInterface{
 
 		if(syncClientCountdownTimer == 0){
 			syncClientCountdownTimer = 1000;
-			Iterator<ServerPlayerEntity> i = ((ServerWorld) (Object) this).getPlayers().iterator();
 
-			while(i.hasNext()){
-				ServerPlayerEntity s = i.next();
-
-				ServerPlayNetworking.send(s, new SyncSeedPayload(seed));
-			}
+            for (ServerPlayerEntity s : ((ServerWorld) (Object) this).getPlayers()) {
+                ServerPlayNetworking.send(s, new SyncSeedPayload(seed));
+            }
 		}
 
 		syncClientCountdownTimer--;
@@ -55,14 +55,14 @@ public class ServerWorldMixin implements WindInterface{
 
 
 	@Override
-	public int getWindLevel(){
+	public int global_Wind$getWindLevel(){
 		if(this.wind == null) calculateWind();
 		double wind = this.wind.length();
 		return WindCalculator.calculateWindLevel(wind);
 	}
 
 	@Override
-	public Vec3d getWind() {
+	public Vec3d global_Wind$getWind() {
 		//GlobalWind.LOGGER.info("getting wind: " + wind.toString());
 		return wind;
 	}

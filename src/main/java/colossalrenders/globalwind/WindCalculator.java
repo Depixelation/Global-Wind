@@ -1,6 +1,5 @@
 package colossalrenders.globalwind;
 
-import colossalrenders.globalwind.config.ModConfigs;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 

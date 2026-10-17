@@ -6,6 +6,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,18 +20,22 @@ import colossalrenders.globalwind.WindSoundManager;
 
 @Mixin(ClientPlayerEntity.class)
 public class ClientPlayerEntityMixin implements PlayerInterface{
-	private boolean wasOutside;
-	private final WindSoundManager WIND_GENTLE = WindSoundManager.of(GlobalWind.WIND_GENTLE_IN, GlobalWind.WIND_GENTLE, GlobalWind.WIND_GENTLE_OUT).ofLength(20*20).ofThreshold(1);
-	private final WindSoundManager WIND_HOWL = WindSoundManager.of(GlobalWind.WIND_HOWL_IN, GlobalWind.WIND_HOWL, GlobalWind.WIND_HOWL_OUT).ofLength(20*20 + 1).ofThreshold(2);
-	Vec3d prevWindVector;
+	@Unique
+    private boolean wasOutside;
+	@Unique
+    private final WindSoundManager WIND_GENTLE = WindSoundManager.of(GlobalWind.WIND_GENTLE_IN, GlobalWind.WIND_GENTLE, GlobalWind.WIND_GENTLE_OUT).ofLength(20*20).ofThreshold(1);
+	@Unique
+    private final WindSoundManager WIND_HOWL = WindSoundManager.of(GlobalWind.WIND_HOWL_IN, GlobalWind.WIND_HOWL, GlobalWind.WIND_HOWL_OUT).ofLength(20*20 + 1).ofThreshold(2);
+	@Unique
+    Vec3d prevWindVector;
 
 	@Override
-	public boolean wasOutside() {
+	public boolean global_Wind$wasOutside() {
 		return wasOutside;
 	}
 
 	@Override
-	public void setOutside(Boolean outside) {
+	public void global_Wind$setOutside(Boolean outside) {
 		wasOutside = outside;
 	}
 
@@ -42,10 +47,10 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 		tickSound(WIND_HOWL, currentPlayer);
 
 		if(prevWindVector == null) prevWindVector = Vec3d.ZERO;
-		if(!currentPlayer.isCreative() && !currentPlayer.isInLava() && !currentPlayer.isTouchingWater() && isOutside(13)){
-			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).getWindLevel() > 0){
+		if(!currentPlayer.isCreative() && !currentPlayer.isInLava() && !currentPlayer.isTouchingWater() && global_Wind$isOutside(13)){
+			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).global_Wind$getWindLevel() > 0){
 				//GlobalWind.LOGGER.info("windlevel more than 0");
-				Vec3d windVector = ((ClientWindInterface) (Object) currentPlayer.getWorld()).getWind();
+				Vec3d windVector = ((ClientWindInterface) (Object) currentPlayer.getWorld()).global_Wind$getWind();
 				if(windVector.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
 
 				if(!currentPlayer.isOnGround()){
@@ -67,24 +72,26 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 		}
 	}
 
-	private static void addVelocity(ClientPlayerEntity player, Vec3d vector){
+	@Unique
+    private static void addVelocity(ClientPlayerEntity player, Vec3d vector){
 		player.addVelocity(vector);
 		player.velocityModified = true;
 		//GlobalWind.LOGGER.info("Adding velocity: " + vector.length());
 	}
 
-	private void tickSound(WindSoundManager sound, ClientPlayerEntity currentPlayer){
+	@Unique
+    private void tickSound(WindSoundManager sound, ClientPlayerEntity currentPlayer){
 		if(sound.isPlaying()){
 			sound.tick((ClientWorld) currentPlayer.getWorld(), currentPlayer);
 		}else{
-			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).getWindLevel() >= sound.getThreshold()){
-				if(((PlayerInterface) (Object) currentPlayer).isOutside(0))sound.startPlaying();
+			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).global_Wind$getWindLevel() >= sound.getThreshold()){
+				if(((PlayerInterface) (Object) currentPlayer).global_Wind$isOutside(0))sound.startPlaying();
 			}
 		}
 	}
 
 	@Override
-	public boolean isOutside(int threshold) {
+	public boolean global_Wind$isOutside(int threshold) {
 		ClientPlayerEntity currentPlayer = (ClientPlayerEntity) (Object) this;
 		return currentPlayer.getWorld().getLightLevel(LightType.SKY, currentPlayer.getBlockPos()) > threshold;
 	}

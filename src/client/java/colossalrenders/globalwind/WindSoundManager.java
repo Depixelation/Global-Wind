@@ -64,8 +64,8 @@ public class WindSoundManager {
      * @return if there is a next to play
      */
     private boolean playNext(ClientWorld world, ClientPlayerEntity player){
-        int windLevel = ((ClientWindInterface) (Object) world).getWindLevel();
-        if(!((PlayerInterface) (Object) player).isOutside(0)) windLevel = 0;
+        int windLevel = ((ClientWindInterface) (Object) world).global_Wind$getWindLevel();
+        if(!((PlayerInterface) (Object) player).global_Wind$isOutside(0)) windLevel = 0;
 
         if(windLevel >= threshold){
             if(lastWindLevel >= threshold){

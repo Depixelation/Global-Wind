@@ -23,7 +23,7 @@ public class ElytraFixMixin{
 
     private Vec3d addWind(Vec3d vec){
         if(!((LivingEntity) (Object) this).getWorld().isClient()){
-            Vec3d windVector = ((WindInterface) (Object) ((LivingEntity) (Object) this).getWorld()).getWind();
+            Vec3d windVector = ((WindInterface) (Object) ((LivingEntity) (Object) this).getWorld()).global_Wind$getWind();
             if(windVector != null){ 
                 GlobalWind.LOGGER.info("subtracting wind vector");
                 return vec.subtract(windVector);

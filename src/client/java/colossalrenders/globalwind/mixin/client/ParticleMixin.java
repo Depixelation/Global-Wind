@@ -2,8 +2,10 @@ package colossalrenders.globalwind.mixin.client;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Vec3d;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -14,10 +16,12 @@ import colossalrenders.globalwind.WindCalculator;
 
 @Mixin(Particle.class)
 public class ParticleMixin{
+    @Final
     @Shadow
     protected ClientWorld world;
     protected boolean shouldApplyWind;
 
+    @Unique
     private Vec3d prevWindVector;
 
     @Inject(at = @At("HEAD"), method = "move(DDD)V")
@@ -25,8 +29,8 @@ public class ParticleMixin{
 
         if(prevWindVector == null) prevWindVector = Vec3d.ZERO;
 
-        if(((ClientWindInterface) (Object) world).getWindLevel() > 0){
-            Vec3d windVector = ((ClientWindInterface) (Object) world).getWind().multiply(2.0);
+        if(((ClientWindInterface) (Object) world).global_Wind$getWindLevel() > 0){
+            Vec3d windVector = ((ClientWindInterface) (Object) world).global_Wind$getWind().multiply(2.0);
 
             if(prevWindVector.length() < windVector.length()){
                 prevWindVector = WindCalculator.calculateWindVector(prevWindVector, windVector);
