@@ -47,7 +47,7 @@ public class ClientPlayerEntityMixin implements PlayerInterface{
 		tickSound(WIND_HOWL, currentPlayer);
 
 		if(prevWindVector == null) prevWindVector = Vec3d.ZERO;
-		if(!currentPlayer.isCreative() && !currentPlayer.isInLava() && !currentPlayer.isTouchingWater() && !currentPlayer.isClimbing() && global_Wind$isOutside(13)){
+		if(!currentPlayer.isCreative() && !currentPlayer.isSpectator() && !currentPlayer.isInLava() && !currentPlayer.isTouchingWater() && !currentPlayer.isClimbing() && global_Wind$isOutside(13)){
 			if(((ClientWindInterface) (Object) currentPlayer.getWorld()).global_Wind$getWindLevel() > 0){
 				//GlobalWind.LOGGER.info("windlevel more than 0");
 				Vec3d windVector = ((ClientWindInterface) (Object) currentPlayer.getWorld()).global_Wind$getWind();
