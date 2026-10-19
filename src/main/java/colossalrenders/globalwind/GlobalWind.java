@@ -2,6 +2,7 @@ package colossalrenders.globalwind;
 
 import colossalrenders.globalwind.config.ModConfigs;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.registry.Registries;
@@ -48,6 +49,10 @@ public class GlobalWind implements ModInitializer {
 				ServerPlayNetworking.send(handler.getPlayer(), new SyncConfigPayload(ModConfigs.WIND_MULTIPLIER_CONFIG));
 			});
 			
+		});
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, from, to) -> {
+			ServerPlayNetworking.send(player, new SyncSeedPayload(player.getEntityWorld().getSeed()));
+			ServerPlayNetworking.send(player, new SyncConfigPayload(ModConfigs.WIND_MULTIPLIER_CONFIG));
 		});
 
 		ModConfigs.registerConfigs();
