@@ -30,7 +30,7 @@ public class ClientWorldMixin implements ClientWindInterface{
 
     @Inject(at = @At("RETURN"), method = "tickTime")
 	private void tickInjection(CallbackInfo info){
-        long t = ((ClientLevel) (Object) this).getDayTime();
+        long t = ((ClientLevel) (Object) this).getOverworldClockTime();
         
         wind = WindCalculator.calculateWind(t, windSeed, GlobalWindConstants.SQUASH, ((ClientLevel) (Object) this).isRaining(), ((ClientLevel) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT, windStrength);
         windLevel = WindCalculator.calculateWindLevel(wind.length());

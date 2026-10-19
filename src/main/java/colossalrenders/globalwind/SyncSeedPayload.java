@@ -16,6 +16,6 @@ public record SyncSeedPayload(long seed) implements CustomPacketPayload{
     }
 
     public static void registerS2C() {
-        PayloadTypeRegistry.playS2C().register(ID, CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ID, CODEC);
     }
 }

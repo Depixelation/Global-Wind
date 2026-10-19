@@ -18,6 +18,6 @@ public record SyncConfigPayload(double windStrength) implements CustomPacketPayl
     }
 
     public static void registerS2C() {
-        PayloadTypeRegistry.playS2C().register(ID, CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ID, CODEC);
     }
 }

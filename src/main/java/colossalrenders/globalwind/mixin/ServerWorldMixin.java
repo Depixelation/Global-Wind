@@ -1,5 +1,6 @@
 package colossalrenders.globalwind.mixin;
 
+import colossalrenders.globalwind.*;
 import colossalrenders.globalwind.config.ModConfigs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
@@ -11,11 +12,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import colossalrenders.globalwind.GlobalWindConstants;
-import colossalrenders.globalwind.SyncSeedPayload;
-import colossalrenders.globalwind.WindCalculator;
-import colossalrenders.globalwind.WindInterface;
 
 @Mixin(ServerLevel.class)
 public class ServerWorldMixin implements WindInterface{
@@ -33,7 +29,7 @@ public class ServerWorldMixin implements WindInterface{
     private void calculateWind(){
 		if(!((Level) (Object) this).dimension().equals(Level.OVERWORLD)) return;
 
-		long t = ((Level) (Object) this).getDayTime();
+		long t = ((Level) (Object) this).getOverworldClockTime();
 		long seed = ((ServerLevel) (Object) this).getSeed();
 		//GlobalWind.LOGGER.info("" + t);
 
@@ -46,6 +42,7 @@ public class ServerWorldMixin implements WindInterface{
 
             for (ServerPlayer s : ((ServerLevel) (Object) this).players()) {
                 ServerPlayNetworking.send(s, new SyncSeedPayload(seed));
+				ServerPlayNetworking.send(s, new SyncConfigPayload(ModConfigs.WIND_MULTIPLIER_CONFIG));
             }
 		}
 
