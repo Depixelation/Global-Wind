@@ -1,5 +1,6 @@
 package colossalrenders.globalwind.mixin;
 
+import colossalrenders.globalwind.*;
 import colossalrenders.globalwind.config.ModConfigs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -12,11 +13,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import colossalrenders.globalwind.GlobalWindConstants;
-import colossalrenders.globalwind.SyncSeedPayload;
-import colossalrenders.globalwind.WindCalculator;
-import colossalrenders.globalwind.WindInterface;
 
 @Mixin(ServerWorld.class)
 public class ServerWorldMixin implements WindInterface{
@@ -47,6 +43,7 @@ public class ServerWorldMixin implements WindInterface{
 
             for (ServerPlayerEntity s : ((ServerWorld) (Object) this).getPlayers()) {
                 ServerPlayNetworking.send(s, new SyncSeedPayload(seed));
+				ServerPlayNetworking.send(s, new SyncConfigPayload(ModConfigs.WIND_MULTIPLIER_CONFIG));
             }
 		}
 
