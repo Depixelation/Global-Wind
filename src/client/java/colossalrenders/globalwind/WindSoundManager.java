@@ -1,10 +1,9 @@
 package colossalrenders.globalwind;
 
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 
 public class WindSoundManager {
     private int countdown;
@@ -38,7 +37,7 @@ public class WindSoundManager {
         return threshold;
     }
 
-    public void tick(ClientWorld world, ClientPlayerEntity player){
+    public void tick(ClientLevel world, LocalPlayer player){
         
         if(countdown == 0 && isPlaying){
             isPlaying = playNext(world, player);
@@ -64,19 +63,19 @@ public class WindSoundManager {
      * @param player
      * @return if there is a next to play
      */
-    private boolean playNext(ClientWorld world, ClientPlayerEntity player){
+    private boolean playNext(ClientLevel world, LocalPlayer player){
         int windLevel = ((ClientWindInterface) (Object) world).global_Wind$getWindLevel();
         if(!((PlayerInterface) (Object) player).global_Wind$isOutside(0)) windLevel = 0;
 
         if(windLevel >= threshold){
             if(lastWindLevel >= threshold){
-                world.playSoundClient(LOOP, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                world.playPlayerSound(LOOP, SoundSource.AMBIENT, 1.0f, 1.0f);
             }else{
-                world.playSoundClient(IN, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                world.playPlayerSound(IN, SoundSource.AMBIENT, 1.0f, 1.0f);
             }
         }else{
             if(lastWindLevel >= threshold){
-                world.playSoundClient(OUT, SoundCategory.AMBIENT, 1.0f, 1.0f);
+                world.playPlayerSound(OUT, SoundSource.AMBIENT, 1.0f, 1.0f);
             }else{
                 return false;
             }

@@ -1,17 +1,17 @@
 package colossalrenders.globalwind;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record SyncSeedPayload(long seed) implements CustomPayload{
-    public static final CustomPayload.Id<SyncSeedPayload> ID = new CustomPayload.Id<>(GlobalWind.WIND_UPDATE_PACKET_ID);
-    public static final PacketCodec<RegistryByteBuf, SyncSeedPayload> CODEC = PacketCodec.tuple(PacketCodecs.VAR_LONG, SyncSeedPayload::seed, SyncSeedPayload::new);
+public record SyncSeedPayload(long seed) implements CustomPacketPayload{
+    public static final CustomPacketPayload.Type<SyncSeedPayload> ID = new CustomPacketPayload.Type<>(GlobalWind.WIND_UPDATE_PACKET_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncSeedPayload> CODEC = StreamCodec.composite(ByteBufCodecs.VAR_LONG, SyncSeedPayload::seed, SyncSeedPayload::new);
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 

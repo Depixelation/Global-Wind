@@ -4,11 +4,10 @@ import colossalrenders.globalwind.config.ModConfigs;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +19,8 @@ public class GlobalWind implements ModInitializer {
 	public static final SoundEvent WIND_HOWL_IN = registerSound("wind-howl-in");
 	public static final SoundEvent WIND_GENTLE_OUT = registerSound("wind-gentle-out");
 	public static final SoundEvent WIND_HOWL_OUT = registerSound("wind-howl-out");
-	public static final Identifier WIND_UPDATE_PACKET_ID = Identifier.of(MOD_ID, "wind-sound"); //why is this id pathed to "wind-sound?" What does it have to do with sound??
-	public static final Identifier SYNC_CONFIG_PACKET_ID = Identifier.of(MOD_ID, "sync-wind-strength");
+	public static final Identifier WIND_UPDATE_PACKET_ID = Identifier.fromNamespaceAndPath(MOD_ID, "wind-sound"); //why is this id pathed to "wind-sound?" What does it have to do with sound??
+	public static final Identifier SYNC_CONFIG_PACKET_ID = Identifier.fromNamespaceAndPath(MOD_ID, "sync-wind-strength");
 
 	public static final SoundEvent[] WIND_SOUNDS = {WIND_GENTLE, WIND_GENTLE_IN, WIND_GENTLE_OUT, WIND_HOWL, WIND_HOWL_IN, WIND_HOWL_OUT};
 
@@ -44,7 +43,7 @@ public class GlobalWind implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 
 			server.execute(() -> {
-				ServerPlayNetworking.send(handler.getPlayer(), new SyncSeedPayload(handler.getPlayer().getEntityWorld().getSeed()));
+				ServerPlayNetworking.send(handler.getPlayer(), new SyncSeedPayload(handler.getPlayer().level().getSeed()));
 				ServerPlayNetworking.send(handler.getPlayer(), new SyncConfigPayload(ModConfigs.WIND_MULTIPLIER_CONFIG));
 			});
 			
@@ -54,7 +53,7 @@ public class GlobalWind implements ModInitializer {
 	}
 
 	private static SoundEvent registerSound(String id) {
-		Identifier identifier = Identifier.of(MOD_ID, id);
-		return Registry.register(Registries.SOUND_EVENT, identifier, SoundEvent.of(identifier));
+		Identifier identifier = Identifier.fromNamespaceAndPath(MOD_ID, id);
+		return Registry.register(BuiltInRegistries.SOUND_EVENT, identifier, SoundEvent.createVariableRangeEvent(identifier));
 	}
 }

@@ -9,13 +9,13 @@ public class GlobalWindClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(SyncSeedPayload.ID, (payload, context) -> {
 			long seed = payload.seed();
     		context.client().execute(() -> {
-				((ClientWindInterface) (Object) context.player().getEntityWorld()).global_Wind$setWindSeed(seed);
+				((ClientWindInterface) (Object) context.player().level()).global_Wind$setWindSeed(seed);
     		});
 		});
 		ClientPlayNetworking.registerGlobalReceiver(SyncConfigPayload.ID, (payload, context) -> {
 			double windStrength = payload.windStrength();
 			context.client().execute(() -> {
-				((ClientWindInterface) (Object) context.player().getEntityWorld()).global_Wind$setWindStrength(windStrength);
+				((ClientWindInterface) (Object) context.player().level()).global_Wind$setWindStrength(windStrength);
 			});
 		});
 	}

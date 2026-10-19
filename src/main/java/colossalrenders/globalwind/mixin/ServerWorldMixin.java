@@ -2,11 +2,10 @@ package colossalrenders.globalwind.mixin;
 
 import colossalrenders.globalwind.config.ModConfigs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,34 +17,34 @@ import colossalrenders.globalwind.SyncSeedPayload;
 import colossalrenders.globalwind.WindCalculator;
 import colossalrenders.globalwind.WindInterface;
 
-@Mixin(ServerWorld.class)
+@Mixin(ServerLevel.class)
 public class ServerWorldMixin implements WindInterface{
 	@Unique
     private int syncClientCountdownTimer;
 	@Unique
-    private Vec3d wind;
+    private Vec3 wind;
 	
-	@Inject(at = @At("HEAD"), method = "tickWeather")
+	@Inject(at = @At("HEAD"), method = "advanceWeatherCycle")
 	private void init(CallbackInfo info) {
 		calculateWind();
 	}
 
 	@Unique
     private void calculateWind(){
-		if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) return;
+		if(!((Level) (Object) this).dimension().equals(Level.OVERWORLD)) return;
 
-		long t = ((World) (Object) this).getTimeOfDay();
-		long seed = ((ServerWorld) (Object) this).getSeed();
+		long t = ((Level) (Object) this).getDayTime();
+		long seed = ((ServerLevel) (Object) this).getSeed();
 		//GlobalWind.LOGGER.info("" + t);
 
-		wind = WindCalculator.calculateWind(t, seed, GlobalWindConstants.SQUASH, ((ServerWorld) (Object) this).isRaining(), ((ServerWorld) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT, ModConfigs.WIND_MULTIPLIER_CONFIG);
+		wind = WindCalculator.calculateWind(t, seed, GlobalWindConstants.SQUASH, ((ServerLevel) (Object) this).isRaining(), ((ServerLevel) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT, ModConfigs.WIND_MULTIPLIER_CONFIG);
 		///GlobalWind.LOGGER.info("" + wind.toString());
 		//if(t % 200 == 0) GlobalWind.LOGGER.info("Current wind velocity: " + wind.length());
 
 		if(syncClientCountdownTimer == 0){
 			syncClientCountdownTimer = 1000;
 
-            for (ServerPlayerEntity s : ((ServerWorld) (Object) this).getPlayers()) {
+            for (ServerPlayer s : ((ServerLevel) (Object) this).players()) {
                 ServerPlayNetworking.send(s, new SyncSeedPayload(seed));
             }
 		}
@@ -62,7 +61,7 @@ public class ServerWorldMixin implements WindInterface{
 	}
 
 	@Override
-	public Vec3d global_Wind$getWind() {
+	public Vec3 global_Wind$getWind() {
 		//GlobalWind.LOGGER.info("getting wind: " + wind.toString());
 		return wind;
 	}

@@ -1,11 +1,5 @@
 package colossalrenders.globalwind.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.LightType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,46 +9,52 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import colossalrenders.globalwind.GlobalWindConstants;
 import colossalrenders.globalwind.WindCalculator;
 import colossalrenders.globalwind.WindInterface;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.phys.Vec3;
 
 @Mixin(Entity.class)
 public class EntityMixin{
     @Unique
-    Vec3d prevWindVelocity;
+    Vec3 prevWindVelocity;
 	
 	@Inject(at = @At("RETURN"), method = "tick")
 	private void init(CallbackInfo info) {
         Entity currentEntity = (Entity) (Object) this;
-        BlockPos entityPos = currentEntity.getBlockPos();
-        boolean isOutside = currentEntity.getEntityWorld().getLightLevel(LightType.SKY, entityPos) > 13;
+        BlockPos entityPos = currentEntity.blockPosition();
+        boolean isOutside = currentEntity.level().getBrightness(LightLayer.SKY, entityPos) > 13;
         //GlobalWind.LOGGER.info("entityMixin");
-		if(!currentEntity.getEntityWorld().isClient() && !currentEntity.isTouchingWater() && !(currentEntity instanceof PlayerEntity)){
+		if(!currentEntity.level().isClientSide() && !currentEntity.isInWater() && !(currentEntity instanceof Player)){
             if(!isOutside) return;
-            if(currentEntity instanceof LivingEntity e && e.isClimbing()) return;
+            if(currentEntity instanceof LivingEntity e && e.onClimbable()) return;
             
-            Vec3d windVelocity = ((WindInterface) currentEntity.getEntityWorld()).global_Wind$getWind();
+            Vec3 windVelocity = ((WindInterface) currentEntity.level()).global_Wind$getWind();
             if(windVelocity.length() < GlobalWindConstants.MIN_WIND_SPEED_FOR_MOVEMENT) return;
-            if(!currentEntity.isOnGround() && prevWindVelocity != null){
+            if(!currentEntity.onGround() && prevWindVelocity != null){
 
                 if(prevWindVelocity.length() < windVelocity.length()){
                     prevWindVelocity = WindCalculator.calculateWindVector(prevWindVelocity, windVelocity);
                 }
 
-                currentEntity.getEntityWorld().getServer().execute(() -> {
-                    currentEntity.addVelocity(prevWindVelocity);
-                    currentEntity.velocityDirty = true;
+                currentEntity.level().getServer().execute(() -> {
+                    currentEntity.push(prevWindVelocity);
+                    currentEntity.needsSync = true;
                 });
 
             }else if(prevWindVelocity == null){
-                prevWindVelocity = Vec3d.ZERO;
-            }else if(currentEntity.isOnGround()){
-                prevWindVelocity = Vec3d.ZERO;
+                prevWindVelocity = Vec3.ZERO;
+            }else if(currentEntity.onGround()){
+                prevWindVelocity = Vec3.ZERO;
                 if(windVelocity.length() > GlobalWindConstants.MAX_WIND_SPEED_BEFORE_SLIPPING){
 
-                    prevWindVelocity = windVelocity.multiply(GlobalWindConstants.SLIPPING_MULTIPLIER);
+                    prevWindVelocity = windVelocity.scale(GlobalWindConstants.SLIPPING_MULTIPLIER);
 
-                    currentEntity.getEntityWorld().getServer().execute(() -> {
-                        currentEntity.addVelocity(prevWindVelocity);
-                        currentEntity.velocityDirty = true;
+                    currentEntity.level().getServer().execute(() -> {
+                        currentEntity.push(prevWindVelocity);
+                        currentEntity.needsSync = true;
                     });
                 }
             }

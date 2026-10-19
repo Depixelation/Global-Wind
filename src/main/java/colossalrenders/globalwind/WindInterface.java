@@ -1,8 +1,8 @@
 package colossalrenders.globalwind;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public interface WindInterface {
-    public Vec3d global_Wind$getWind();
+    public Vec3 global_Wind$getWind();
     public int global_Wind$getWindLevel();
 }

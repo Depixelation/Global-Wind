@@ -1,14 +1,14 @@
 package colossalrenders.globalwind;
 
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 public final class WindCalculator {
     private WindCalculator(){
         throw new UnsupportedOperationException();
     }
 
-    public static Vec3d calculateWind(long t, long seed, int SQUASH, boolean isRaining, boolean isThundering, double WIND_MULTIPLIER, double WIND_MULTIPLIER_CONFIG){
+    public static Vec3 calculateWind(long t, long seed, int SQUASH, boolean isRaining, boolean isThundering, double WIND_MULTIPLIER, double WIND_MULTIPLIER_CONFIG){
         double x = Math.sin(2 * (((double) t - seed)/SQUASH)) + Math.sin(Math.PI * (((double) t - seed)/SQUASH));
 		double z = Math.sin(2 * (((double) -t + seed)/SQUASH)) + Math.sin(Math.PI * (((double) -t + seed)/SQUASH) + 10);
 		double a = Math.sin(2 * (((double) (t - seed)*2)/SQUASH) + 1) + Math.sin(Math.PI * (((double) (-t + seed)*2)/SQUASH) + 1);
@@ -17,13 +17,13 @@ public final class WindCalculator {
 		double factor = isRaining ? isThundering ? 1.0 : 0.5 : 0.0;
 		
 		double c = a * gusts;
-		double d = MathHelper.lerp(0.5 * factor, a, c);
+		double d = Mth.lerp(0.5 * factor, a, c);
 		double multiplier = (0.5 + 0.5 * factor) * d + 4 * factor * factor;
 
-		Vec3d windVector = new Vec3d(x, 0, z);
-		windVector = windVector.multiply(Math.max(multiplier, 0));
+		Vec3 windVector = new Vec3(x, 0, z);
+		windVector = windVector.scale(Math.max(multiplier, 0));
 
-        return windVector.multiply(WIND_MULTIPLIER).multiply(WIND_MULTIPLIER_CONFIG);
+        return windVector.scale(WIND_MULTIPLIER).scale(WIND_MULTIPLIER_CONFIG);
     }
 
     public static int calculateWindLevel(double windMagnitude){
@@ -37,7 +37,7 @@ public final class WindCalculator {
 		}
     }
 
-    public static Vec3d calculateWindVector(Vec3d prevWindVelocity, Vec3d windVelocity){
-        return prevWindVelocity.add(windVelocity.multiply(0.5 * ((windVelocity.length() - prevWindVelocity.length())/windVelocity.length())));
+    public static Vec3 calculateWindVector(Vec3 prevWindVelocity, Vec3 windVelocity){
+        return prevWindVelocity.add(windVelocity.scale(0.5 * ((windVelocity.length() - prevWindVelocity.length())/windVelocity.length())));
     }
 }

@@ -1,19 +1,19 @@
 package colossalrenders.globalwind;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record SyncConfigPayload(double windStrength) implements CustomPayload {
-    public static final Id<SyncConfigPayload> ID = new CustomPayload.Id<SyncConfigPayload>(GlobalWind.SYNC_CONFIG_PACKET_ID);
-    public static final PacketCodec<RegistryByteBuf, SyncConfigPayload> CODEC = PacketCodec.of(
+public record SyncConfigPayload(double windStrength) implements CustomPacketPayload {
+    public static final Type<SyncConfigPayload> ID = new CustomPacketPayload.Type<SyncConfigPayload>(GlobalWind.SYNC_CONFIG_PACKET_ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncConfigPayload> CODEC = StreamCodec.ofMember(
             (payload, buf) -> buf.writeDouble(payload.windStrength),
             (buf) -> new SyncConfigPayload(buf.readDouble())
     );
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 

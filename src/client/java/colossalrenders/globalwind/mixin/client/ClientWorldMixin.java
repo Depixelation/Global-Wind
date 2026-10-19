@@ -1,8 +1,4 @@
 package colossalrenders.globalwind.mixin.client;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,33 +8,36 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import colossalrenders.globalwind.ClientWindInterface;
 import colossalrenders.globalwind.GlobalWindConstants;
 import colossalrenders.globalwind.WindCalculator;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
-@Mixin(ClientWorld.class)
+@Mixin(ClientLevel.class)
 public class ClientWorldMixin implements ClientWindInterface{
     @Unique
     private int windLevel;
     @Unique
-    private Vec3d wind;
+    private Vec3 wind;
     @Unique
     private long windSeed;
     @Unique
     private double windStrength;
     @Override
     public int global_Wind$getWindLevel() {
-        if(!((World) (Object) this).getRegistryKey().equals(World.OVERWORLD)) return 0;
+        if(!((Level) (Object) this).dimension().equals(Level.OVERWORLD)) return 0;
         return windLevel;
     }
 
     @Inject(at = @At("RETURN"), method = "tickTime")
 	private void tickInjection(CallbackInfo info){
-        long t = ((ClientWorld) (Object) this).getTimeOfDay();
+        long t = ((ClientLevel) (Object) this).getDayTime();
         
-        wind = WindCalculator.calculateWind(t, windSeed, GlobalWindConstants.SQUASH, ((ClientWorld) (Object) this).isRaining(), ((ClientWorld) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT, windStrength);
+        wind = WindCalculator.calculateWind(t, windSeed, GlobalWindConstants.SQUASH, ((ClientLevel) (Object) this).isRaining(), ((ClientLevel) (Object) this).isThundering(), GlobalWindConstants.WIND_MULT, windStrength);
         windLevel = WindCalculator.calculateWindLevel(wind.length());
 	}
 
     @Override
-    public Vec3d global_Wind$getWind() {
+    public Vec3 global_Wind$getWind() {
         return wind;
     }
 
